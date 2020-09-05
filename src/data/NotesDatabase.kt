@@ -2,6 +2,7 @@ package farees.hussain.data
 
 import farees.hussain.data.collections.Note
 import farees.hussain.data.collections.User
+import org.litote.kmongo.contains
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.eq
 import org.litote.kmongo.reactivestreams.KMongo
@@ -20,6 +21,10 @@ suspend fun checkIfUserExists(email:String) = users.findOne(User::email eq(email
 suspend fun checkPasswordForEmail(email:String,passwordToCheck:String):Boolean{
     val actualPassword = users.findOne(User::email eq(email))?.password?:return false
     return actualPassword==passwordToCheck
+}
+
+suspend fun getNotesForUser(email: String): List<Note>{
+    return notes.find(Note::owners contains email).toList()
 }
 
 suspend fun addNotes(note: Note) = notes.insertOne(note).wasAcknowledged()

@@ -4,6 +4,7 @@ import farees.hussain.data.checkPasswordForEmail
 import farees.hussain.data.collections.User
 import farees.hussain.data.registerUser
 import farees.hussain.routes.loginRoute
+import farees.hussain.routes.noteRoutes
 import farees.hussain.routes.registerRoute
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -27,20 +28,23 @@ fun Application.module(testing: Boolean = false) {
     install(DefaultHeaders)     // default headers -> responses from our server
     /*default header will attach useful extra information such as the current date to response headers*/
     install(CallLogging)        // callLogging -> log of all HTTP requests that come to server and responses
-    /* Routing -> to define url endpoints */
-    install(Routing){
-        registerRoute()
-        loginRoute()
-    }
     /* ContentNegotiation -> for validation purpose using gson for responding to json content */
     install(ContentNegotiation){
         gson {
             setPrettyPrinting()
         }
     }
-    /*authentication so that not any one with the endpoints can make changes*/
+    /*authentication so that not any one with the endpoints can make changes
+    * authentication should come before routing
+    * */
     install(Authentication) {
         configureAuth()
+    }
+    /* Routing -> to define url endpoints */
+    install(Routing){
+        registerRoute()
+        loginRoute()
+        noteRoutes()
     }
 }
 
