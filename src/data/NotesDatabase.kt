@@ -37,6 +37,16 @@ suspend fun saveNote(note: Note) : Boolean {
     }
 }
 
+suspend fun isOwnerOfNote(noteId: String,owner:String):Boolean{
+    val note = notes.findOneById(noteId)?:return false
+    return owner in note.owners
+}
+
+suspend fun addOwnerToNote(noteId:String,owner:String):Boolean{
+    val owners = notes.findOneById(noteId)?.owners?:return false
+    return notes.updateOneById(noteId, setValue(Note::owners,owners + owner)).wasAcknowledged()
+}
+
 suspend fun deleteNoteForUser(email:String,noteId:String):Boolean{
     val note = notes.findOne(Note::id eq noteId, Note::owners contains email)
     note?.let {note->
