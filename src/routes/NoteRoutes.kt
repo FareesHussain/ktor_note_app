@@ -1,7 +1,9 @@
 package farees.hussain.routes
 
 import farees.hussain.data.collections.Note
+import farees.hussain.data.deleteNoteForUser
 import farees.hussain.data.getNotesForUser
+import farees.hussain.data.requests.DeleteNoteRequest
 import farees.hussain.data.saveNote
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -35,6 +37,24 @@ fun Route.noteRoutes(){
                 if(saveNote(note)){
                     call.respond(OK)
                 }else {
+                    call.respond(Conflict)
+                }
+            }
+        }
+    }
+    route("/deleteNote"){
+        authenticate {
+            post {
+                val email = call.principal<UserIdPrincipal>()!!.name
+                val request = try{
+                    call.receive<DeleteNoteRequest>()
+                }catch (e:ContentTransformationException){
+                    call.respond(BadRequest)
+                    return@post
+                }
+                if(deleteNoteForUser(email,request.id)){
+                    call.respond(OK)
+                }else{
                     call.respond(Conflict)
                 }
             }
