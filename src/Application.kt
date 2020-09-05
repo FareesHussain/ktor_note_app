@@ -2,6 +2,7 @@ package farees.hussain
 
 import farees.hussain.data.collections.User
 import farees.hussain.data.registerUser
+import farees.hussain.routes.loginRoute
 import farees.hussain.routes.registerRoute
 import io.ktor.application.*
 import io.ktor.features.*
@@ -27,6 +28,7 @@ fun Application.module(testing: Boolean = false) {
     /* Routing -> to define url endpoints */
     install(Routing){
         registerRoute()
+        loginRoute()
     }
     /* ContentNegotiation -> for validation purpose using gson for responding to json content */
     install(ContentNegotiation){
