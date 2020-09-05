@@ -1,10 +1,12 @@
 package farees.hussain
 
+import farees.hussain.data.checkPasswordForEmail
 import farees.hussain.data.collections.User
 import farees.hussain.data.registerUser
 import farees.hussain.routes.loginRoute
 import farees.hussain.routes.registerRoute
 import io.ktor.application.*
+import io.ktor.auth.*
 import io.ktor.features.*
 import io.ktor.gson.*
 import io.ktor.response.*
@@ -34,6 +36,23 @@ fun Application.module(testing: Boolean = false) {
     install(ContentNegotiation){
         gson {
             setPrettyPrinting()
+        }
+    }
+    /*authentication so that not any one with the endpoints can make changes*/
+    install(Authentication) {
+        configureAuth()
+    }
+}
+
+private fun Authentication.Configuration.configureAuth(){
+    basic {
+        realm = "Note Server"
+        validate {credentials->
+            val email = credentials.name
+            val password = credentials.password
+            if(checkPasswordForEmail(email,password)){
+                UserIdPrincipal(email)
+            }else null
         }
     }
 }
