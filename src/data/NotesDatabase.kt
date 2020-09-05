@@ -27,4 +27,11 @@ suspend fun getNotesForUser(email: String): List<Note>{
     return notes.find(Note::owners contains email).toList()
 }
 
-suspend fun addNotes(note: Note) = notes.insertOne(note).wasAcknowledged()
+suspend fun saveNote(note: Note) : Boolean {
+    val noteExists = notes.findOneById(note.id) != null
+    return if(noteExists){
+        notes.updateOneById(note.id,note).wasAcknowledged()
+    }else{
+        notes.insertOne(note).wasAcknowledged()
+    }
+}
